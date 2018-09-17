@@ -12,7 +12,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -38,9 +37,11 @@ repositories {
 publish {
     userOrg = "fengivy"
     repoName = 'EasyAdapter'
-    groupId = 'com.ivy'
-    artifactId = 'adapter'
+    groupId = 'com.ivy.adapter'
+    artifactId = 'EasyAdapter'
     publishVersion = '1.0.0'
     desc = 'Easy Adapter For RecyclerView'
     website = 'https://github.com/fengivy/EasyAdapter'
+    //command
+    //gradlew clean build bintrayUpload -PbintrayUser=fengivy -PbintrayKey=* -PdryRun=false
 }
