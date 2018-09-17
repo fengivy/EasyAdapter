@@ -14,9 +14,9 @@ import android.view.ViewGroup
  *
  */
 class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHolder>() {
-    //用于记录class和布局的关系
+    //record class and layout relation
     private val layouts = mutableMapOf<Class<*>, LayoutType>()
-    //用于记录itemType和布局的关系
+    //record itemType and layout relation
     private val layoutsReflect = mutableMapOf<Int, EasyViewType<Any>>()
     private val viewTypeReflect = mutableMapOf<EasyViewType<Any>,Int>()
     private val data = mutableListOf<Any>()
@@ -102,7 +102,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EasyViewHolder {
-        val itemTypeInterface = layoutsReflect[viewType]?:throw IllegalArgumentException("请调用addType方法")
+        val itemTypeInterface = layoutsReflect[viewType]?:throw IllegalArgumentException("please invoke addType function")
         return itemTypeInterface.createEasyViewHolder(mInflater,parent)
     }
 
@@ -120,7 +120,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         itemTypeInterface.adapter = this
         val layoutTypes: LayoutType? = layouts[itemTypeInterface.getBeanClass()]
         if (layoutTypes == null){
-            //设置layoutType对象
+            //set up layoutType object
             val layoutType = LayoutType(itemTypeInterface as EasyViewType<Any>)
             layoutType.beanType.put(itemTypeInterface.markValue(), itemTypeInterface)
 
@@ -154,7 +154,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
 
 
     override fun getItemViewType(position: Int): Int {
-        return viewTypeReflect[getItemTypeInterfaceByPosition(position)] ?:throw IllegalArgumentException("请调用addType方法:$position")
+        return viewTypeReflect[getItemTypeInterfaceByPosition(position)] ?:throw IllegalArgumentException("please invoke addType function:$position")
     }
 
     fun getItemTypeInterfaceByPosition(position: Int): EasyViewType<Any> {
@@ -167,8 +167,8 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
                     return emptyViewType[0]
                 }else{
                     val bean = data[position-headers.size]
-                    val layoutType: LayoutType = layouts[bean::class.java]?:throw IllegalArgumentException("请调用addType方法")
-                    layoutType.beanType[layoutType.itemTypeInterface.markBean(bean)] ?:throw IllegalArgumentException("请调用addType方法")
+                    val layoutType: LayoutType = layouts[bean::class.java]?:throw IllegalArgumentException("please invoke addType function")
+                    layoutType.beanType[layoutType.itemTypeInterface.markBean(bean)] ?:throw IllegalArgumentException("please invoke addType function")
                 }
             }
         }

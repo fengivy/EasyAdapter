@@ -2,8 +2,6 @@ package com.ivy.adapter
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
 import android.support.v7.widget.RecyclerView
 import android.util.SparseArray
 import android.view.View
@@ -29,13 +27,13 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
         return this
     }
 
-    fun setText(viewId: Int, @StringRes strId: Int): EasyViewHolder {
+    fun setText(viewId: Int, strId: Int): EasyViewHolder {
         val view = this.getView<View>(viewId) as TextView
         view.setText(strId)
         return this
     }
 
-    fun setImageResource(viewId: Int, @DrawableRes imageResId: Int): EasyViewHolder {
+    fun setImageResource(viewId: Int, imageResId: Int): EasyViewHolder {
         val view = this.getView<View>(viewId) as ImageView
         view.setImageResource(imageResId)
         return this
@@ -47,7 +45,7 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
         return this
     }
 
-    fun setBackgroundRes(viewId: Int, @DrawableRes backgroundRes: Int): EasyViewHolder {
+    fun setBackgroundRes(viewId: Int, backgroundRes: Int): EasyViewHolder {
         val view = this.getView<View>(viewId)
         view?.setBackgroundResource(backgroundRes)
         return this
@@ -134,7 +132,7 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
         childLongClickViewIds.add(viewId)
     }
 
-    @Suppress("UNCHECKED_CAST")
+
     fun <T : View> getView(viewId: Int): T? {
         var view: T? = this.views.get(viewId) as T?
         if (view == null) {

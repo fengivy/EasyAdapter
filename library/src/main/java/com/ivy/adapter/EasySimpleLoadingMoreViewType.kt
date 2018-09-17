@@ -13,10 +13,10 @@ class EasySimpleLoadingMoreViewType : EasyLoadingMoreViewType<LoadingMore>() {
     }
 
     override fun loading(bean: LoadingMore, holder: EasyViewHolder) {
-        holder.setText(R.id.tv,"加载中...")
+        holder.setText(R.id.tv,context.getString(R.string.view_easy_adapter_loading))
     }
 
     override fun loadingFinish(bean: LoadingMore, holder: EasyViewHolder) {
-        holder.setText(R.id.tv,"没有更多数据了")
+        holder.setText(R.id.tv,context.getString(R.string.view_easy_adapter_loading_finish))
     }
 }
