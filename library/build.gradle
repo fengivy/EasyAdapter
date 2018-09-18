@@ -39,7 +39,7 @@ publish {
     repoName = 'EasyAdapter'
     groupId = 'com.ivy.adapter'
     artifactId = 'EasyAdapter'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'Easy Adapter For RecyclerView'
     website = 'https://github.com/fengivy/EasyAdapter'
     //command

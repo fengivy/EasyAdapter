@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.ivy.adapter:EasyAdapter:1.0.0'
+  implementation 'com.ivy.adapter:EasyAdapter:1.0.1'
 }
 ```
 
@@ -17,7 +17,7 @@ or use maven
 <dependency>
   <groupId>com.ivy.adapter</groupId>
   <artifactId>EasyAdapter</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <type>pom</type>
 </dependency>
 ```
