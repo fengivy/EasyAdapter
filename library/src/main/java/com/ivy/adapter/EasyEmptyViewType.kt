@@ -8,7 +8,7 @@ abstract class EasyEmptyViewType<T> : EasyViewType<T>() {
     var bean:T? = null
 
 
-    override fun convert(position: Int, bean: T, holder: EasyViewHolder) {
+    override fun convert(position: Int, bean: T, holder: EasyViewHolder, isChoose: Boolean) {
         convert(this.bean?:return, holder)
     }
 

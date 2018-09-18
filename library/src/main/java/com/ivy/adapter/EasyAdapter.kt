@@ -15,10 +15,9 @@ import android.view.ViewGroup
  */
 class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHolder>() {
     //record class and layout relation
-    private val layouts = mutableMapOf<Class<*>, LayoutType>()
+    private val layouts = mutableMapOf<Class<*>, EasyViewType<Any>>()
     //record itemType and layout relation
     private val layoutsReflect = mutableMapOf<Int, EasyViewType<Any>>()
-    private val viewTypeReflect = mutableMapOf<EasyViewType<Any>,Int>()
     private val data = mutableListOf<Any>()
     private var autoIncrementItemTypeNum = 0
     private var loadingMoreViewType: EasyLoadingMoreViewType<Any> = EasySimpleLoadingMoreViewType() as EasyLoadingMoreViewType<Any>
@@ -64,33 +63,26 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
 
 
     override fun onBindViewHolder(holder: EasyViewHolder, position: Int) {
-        when {
-            isHeaderPosition(position) -> {
+        val viewType = getItemTypeInterfaceByPosition(position)
+        when(viewType) {
+           is EasyHeaderAndFooterViewType -> {
                 setFullSpanWhenStagger(holder)
-                val headerViewType = headers[position]
-                headerViewType.viewHolder = holder
-                headerViewType.convert(-1,headerViewType.bean?:return,holder)
+               viewType.viewHolder = holder
+               viewType.bindViewHolder(-1,viewType.bean?:return,holder)
             }
-            isLoadingMorePosition(position) -> {
+            is EasyLoadingMoreViewType -> {
                 setFullSpanWhenStagger(holder)
-                loadingMoreViewType.convert(position, loadingMoreViewType.bean ?: return, holder)
+                viewType.bindViewHolder(-1, viewType.bean ?: return, holder)
             }
-            isFooterPosition(position) -> {
+            is EasyEmptyViewType ->{
                 setFullSpanWhenStagger(holder)
-                val footerViewType = footers[position-headers.size - if (data.size == 0) emptyViewType.size else data.size]
-                footerViewType.viewHolder = holder
-                footerViewType.convert(-1,footerViewType.bean?:return,holder)
+                val rvHeight = rv?.height?:0
+                val height =  rvHeight - getHeaderHeight()%rvHeight
+                holder.itemView.layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,height)
+                viewType.bindViewHolder(-1, viewType.bean?:return,holder)
             }
             else -> {
-                if (data.size == 0){
-                    setFullSpanWhenStagger(holder)
-                    val rvHeight = rv?.height?:0
-                    val height =  rvHeight - getHeaderHeight()%rvHeight
-                    holder.itemView.layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,height)
-                    emptyViewType[0].convert(-1, emptyViewType[0].bean?:return,holder)
-                }else{
-                    getItemTypeInterfaceByPosition(position).convert(position-headers.size, data[position-headers.size], holder)
-                }
+                viewType.bindViewHolder(position-getHeaderCount(), data[position-getHeaderCount()], holder)
             }
         }
     }
@@ -108,9 +100,9 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
 
     override fun getItemCount(): Int {
         return if (data.size == 0&&emptyViewType.size!=0){
-            headers.size+emptyViewType.size+footers.size+(if (isLoadingMore()) 1 else 0)
+            getHeaderCount()+emptyViewType.size+getFooterCount()+(if (isLoadingMore()) 1 else 0)
         }else{
-            headers.size+data.size+footers.size+(if (isLoadingMore()) 1 else 0)
+            getHeaderCount()+data.size+getFooterCount()+(if (isLoadingMore()) 1 else 0)
         }
     }
 
@@ -118,21 +110,20 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
     fun addType(itemTypeInterface: EasyViewType<*>): EasyAdapter {
         itemTypeInterface.context = context
         itemTypeInterface.adapter = this
-        val layoutTypes: LayoutType? = layouts[itemTypeInterface.getBeanClass()]
-        if (layoutTypes == null){
-            //set up layoutType object
-            val layoutType = LayoutType(itemTypeInterface as EasyViewType<Any>)
-            layoutType.beanType.put(itemTypeInterface.markValue(), itemTypeInterface)
-
-            layouts.put(itemTypeInterface.getBeanClass(),layoutType)
-            layoutsReflect.put(autoIncrementItemTypeNum,itemTypeInterface)
-            viewTypeReflect.put(itemTypeInterface,autoIncrementItemTypeNum)
-            autoIncrementItemTypeNum++
-        }else{
-            if (layoutTypes.beanType[itemTypeInterface.markValue()] ==null){
-                layoutTypes.beanType.put(itemTypeInterface.markValue(),itemTypeInterface as EasyViewType<Any>)
+        val easyViewType: EasyViewType<Any>? = layouts[itemTypeInterface.getBeanClass()]
+        if (easyViewType == null){
+            layouts.put(itemTypeInterface.getBeanClass(), itemTypeInterface as EasyViewType<Any>)
+            if (itemTypeInterface is EasyMultipleViewType){
+                itemTypeInterface.easyViewTypeMap.forEach {
+                    it.value.context = context
+                    it.value.adapter = this
+                    layoutsReflect.put(autoIncrementItemTypeNum, it.value as EasyViewType<Any>)
+                    it.value.itemViewType = autoIncrementItemTypeNum
+                    autoIncrementItemTypeNum++
+                }
+            }else{
                 layoutsReflect.put(autoIncrementItemTypeNum,itemTypeInterface)
-                viewTypeReflect.put(itemTypeInterface,autoIncrementItemTypeNum)
+                itemTypeInterface.itemViewType = autoIncrementItemTypeNum
                 autoIncrementItemTypeNum++
             }
         }
@@ -140,35 +131,31 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
     }
 
     private fun removeType(itemTypeInterface: EasyViewType<*>){
-        val itemTypeNum = viewTypeReflect[itemTypeInterface] ?: return
-        viewTypeReflect.remove(itemTypeInterface)
-        layoutsReflect.remove(itemTypeNum)
-        val layoutType = layouts[itemTypeInterface.getBeanClass()]?:return
-        if (layoutType.beanType.isEmpty()){
-            layouts.remove(itemTypeInterface.getBeanClass())
-        }else{
-            layoutType.beanType.remove(itemTypeInterface.markValue())
-        }
+        layoutsReflect.remove(itemTypeInterface.itemViewType)
+        layouts.remove(itemTypeInterface.getBeanClass())
     }
 
 
 
     override fun getItemViewType(position: Int): Int {
-        return viewTypeReflect[getItemTypeInterfaceByPosition(position)] ?:throw IllegalArgumentException("please invoke addType function:$position")
+        return getItemTypeInterfaceByPosition(position).itemViewType
     }
 
     fun getItemTypeInterfaceByPosition(position: Int): EasyViewType<Any> {
         return when {
             isHeaderPosition(position) -> headers[position]
-            isLoadingMorePosition(position) -> loadingMoreViewType as EasyViewType<Any>
-            isFooterPosition(position) -> footers[position-headers.size-if (data.size ==0) emptyViewType.size else data.size]
+            isLoadingMorePosition(position) -> loadingMoreViewType
+            isFooterPosition(position) -> footers[position-getHeaderCount()-if (data.size ==0) emptyViewType.size else data.size]
             else -> {
                 if (data.size ==0){
                     return emptyViewType[0]
                 }else{
-                    val bean = data[position-headers.size]
-                    val layoutType: LayoutType = layouts[bean::class.java]?:throw IllegalArgumentException("please invoke addType function")
-                    layoutType.beanType[layoutType.itemTypeInterface.markBean(bean)] ?:throw IllegalArgumentException("please invoke addType function")
+                    val bean = data[position-getHeaderCount()]
+                    val viewType = layouts[bean::class.java]?:throw IllegalArgumentException("please invoke addType function")
+                    if (viewType is EasyMultipleViewType){
+                        return viewType.easyViewTypeMap[viewType.markBean(bean)]?:throw IllegalArgumentException("please invoke addType function")
+                    }
+                    return viewType
                 }
             }
         }
@@ -261,7 +248,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         val position = footers.indexOf(itemTypeInterface)
         if (position >= 0){
             footers.removeAt(position)
-            this.notifyItemRemoved(itemCount-1-if (isLoadingMore()) 1 else 0-(footers.size+1)+position)
+            this.notifyItemRemoved(itemCount-1-if (isLoadingMore()) 1 else 0-(getFooterCount()+1)+position)
         }
     }
 
@@ -300,6 +287,10 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
 
     fun getData() :List<Any>{
         return data
+    }
+
+    fun <T> getDataByPosition(position:Int):T{
+        return data[position] as T
     }
 
     fun getHeaderCount(): Int {
@@ -352,22 +343,78 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
     }
 
     private fun isHeaderPosition(position: Int):Boolean{
-        return position<headers.size
+        return position<getHeaderCount()
     }
 
     private fun isLoadingMorePosition(position: Int):Boolean{
         return if (data.size == 0){
-            position >= headers.size + emptyViewType.size + footers.size
+            position >= getHeaderCount() + emptyViewType.size + getFooterCount()
         }else{
-            position >= headers.size + data.size+footers.size
+            position >= getHeaderCount() + data.size+getFooterCount()
         }
     }
 
     private fun isFooterPosition(position: Int):Boolean{
         return if (data.size == 0){
-            position>=headers.size+emptyViewType.size
+            position>=getHeaderCount()+emptyViewType.size
         }else{
-            position>=headers.size+data.size
+            position>=getHeaderCount()+data.size
         }
+    }
+
+    /**
+     * single choose
+     */
+    private var lastSingleRecord:Any? = null
+
+    fun judgeIsSingleChoose(any: Any):Boolean{
+        return judgeObjectIsEqual(any,lastSingleRecord)
+    }
+
+    fun resetSingleChoose(){
+        val position = getPositionByObject(lastSingleRecord?:return)
+        lastSingleRecord = null
+        if (position !=-1) {
+            notifyItemChanged(position)
+        }
+    }
+
+    fun clickSingleChoose(any: Any) {
+        if (any == lastSingleRecord){
+            return
+        }
+        val oldPosition = getPositionByObject(lastSingleRecord)
+        val position  = getPositionByObject(any)
+        lastSingleRecord = any
+
+        if (position!=-1){
+            notifyItemChanged(position)
+        }
+        if (oldPosition!= -1){
+            notifyItemChanged(oldPosition)
+        }
+    }
+
+    fun getSingleChoose():Any?{
+        return lastSingleRecord
+    }
+
+    fun getSingleChoosePosition():Int{
+        return getPositionByObject(lastSingleRecord)
+    }
+
+    fun getPositionByObject(any: Any?):Int{
+        val index = data.indexOfFirst { judgeObjectIsEqual(it,any) }
+        if (index >= 0){
+            return getHeaderCount()+index
+        }
+        return -1
+    }
+
+    /**
+     * judge two object is equal,use in getPositionByObject function and single choose
+     */
+    fun judgeObjectIsEqual(last:Any?, now:Any?):Boolean{
+        return last === now
     }
 }

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import com.ivy.adapter.EasyAdapter
 import com.ivy.adapter.EasyItemClickListener
 import com.ivy.adapter.EasyLoadingMoreViewType
@@ -18,15 +19,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val adapter = EasyAdapter(this)
                 .addHeader(MainHeaderViewType())
-                .addHeader(MainHeaderViewType("second"))
                 .addFooter(MainFooterViewType())
                 .addType(UserViewType())
                 .addType(HouseViewType())
-                .addType(UserViewTypeGirl())
                 .setEmptyView(EmptyViewType())
                 //.openLoadingMore(true)
-        //rv.layoutManager = LinearLayoutManager(this)
-        val layoutManager = GridLayoutManager(this,3)
+        rv.layoutManager = LinearLayoutManager(this)
+        /*val layoutManager = GridLayoutManager(this,3)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
             override fun getSpanSize(position: Int): Int {
                 if (position%4==0){
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        rv.layoutManager = layoutManager
+        rv.layoutManager = layoutManager*/
         rv.addOnItemTouchListener(EasyItemClickListener())
         rv.adapter = adapter
         //adapter.resetData(getLoadingValue())

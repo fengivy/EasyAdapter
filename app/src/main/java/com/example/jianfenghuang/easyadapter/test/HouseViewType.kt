@@ -11,16 +11,19 @@ import com.ivy.adapter.EasyViewType
  *
  */
 class HouseViewType : EasyViewType<House>() {
+
     override fun getLayoutId(): Int {
         return R.layout.adapter_house
     }
 
-    override fun convert(position: Int, bean: House, holder: EasyViewHolder) {
-        holder.setText(R.id.tv,bean.houseName)
+    override fun convert(position: Int, bean: House, holder: EasyViewHolder, isChoose: Boolean) {
+        holder.setText(R.id.tv,"${bean.houseName}--${if (isChoose) "choose" else ""}")
         holder.setBackgroundColor(R.id.iv,bean.houseColor)
         holder.addOnClickListener(R.id.tv)
         holder.addOnLongClickListener(R.id.tv)
     }
+
+
 
     override fun onClickItem(bean: House) {
         super.onClickItem(bean)
@@ -48,5 +51,9 @@ class HouseViewType : EasyViewType<House>() {
     override fun onLongClickItem(bean: House) {
         super.onLongClickItem(bean)
         Toast.makeText(context,"长按房子：${bean.toString()}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun isOpenSingleChooseByItem(): Boolean {
+        return true
     }
 }

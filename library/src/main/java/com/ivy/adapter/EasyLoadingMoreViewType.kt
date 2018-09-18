@@ -11,7 +11,7 @@ abstract class EasyLoadingMoreViewType<T> : EasyViewType<T>() {
         this.bean = bean
     }
 
-    override fun convert(position: Int, bean: T, holder: EasyViewHolder) {
+    override fun convert(position: Int, bean: T, holder: EasyViewHolder, isChoose: Boolean) {
         when(uiStatus){
             STATUS_LOAD_READY -> {
                 loading(bean,holder)

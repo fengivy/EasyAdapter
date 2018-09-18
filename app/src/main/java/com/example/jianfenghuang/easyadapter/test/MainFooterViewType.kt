@@ -7,7 +7,7 @@ import com.ivy.adapter.EastFooterViewType
 /**
  * Created by jianfeng.huang on 2018/9/5.
  */
-class MainFooterViewType() : EastFooterViewType<MainFooterViewType>() {
+class MainFooterViewType : EastFooterViewType<MainFooterViewType>() {
     override fun convert(bean: MainFooterViewType, holder: EasyViewHolder) {
 
     }

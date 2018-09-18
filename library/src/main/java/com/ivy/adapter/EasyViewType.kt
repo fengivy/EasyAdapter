@@ -13,6 +13,8 @@ import java.lang.reflect.ParameterizedType
 abstract class EasyViewType<T> {
     lateinit var adapter: EasyAdapter
     lateinit var context:Context
+    //记录adapter的itemViewType
+    var itemViewType = -1
     private val beanClazz:Class<T> by lazy {
         val genericSuperclass = this@EasyViewType::class.java.genericSuperclass
         if (genericSuperclass is ParameterizedType) {
@@ -25,9 +27,13 @@ abstract class EasyViewType<T> {
         }
         throw IllegalArgumentException("请设置泛型")
     }
+    fun bindViewHolder(position: Int, bean: T, holder: EasyViewHolder){
+        convert(position,bean,holder,adapter.judgeIsSingleChoose(bean!!))
+    }
 
     abstract fun getLayoutId():Int
-    abstract fun convert(position:Int,bean :T,holder: EasyViewHolder)
+    abstract fun convert(position:Int,bean :T,holder: EasyViewHolder,isChoose: Boolean = false)
+
 
     fun createEasyViewHolder(inflate:LayoutInflater,parent: ViewGroup): EasyViewHolder {
         val viewHolder = EasyViewHolder(inflate.inflate(getLayoutId(), parent, false))
@@ -41,13 +47,6 @@ abstract class EasyViewType<T> {
 
     fun getBeanClass(): Class<T>{
         return beanClazz
-    }
-    open fun markBean(bean: T):Any?{
-        return null
-    }
-
-    open fun markValue():Any?{
-        return null
     }
 
     open fun onClickItem(bean: T){}
@@ -64,5 +63,13 @@ abstract class EasyViewType<T> {
 
     open fun onViewAttachedToWindow(holder: EasyViewHolder){
 
+    }
+
+    open fun isOpenSingleChooseByItem():Boolean{
+        return false
+    }
+
+    open fun isOpenSingleChooseByChild(viewId:Int):Boolean{
+        return false
     }
 }

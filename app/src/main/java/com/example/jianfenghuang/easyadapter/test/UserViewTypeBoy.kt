@@ -9,9 +9,9 @@ import com.ivy.adapter.EasyViewType
  * Created by jianfeng.huang on 2018/9/5.
  *
  */
-class UserViewTypeGirl : EasyViewType<User>() {
+class UserViewTypeBoy : EasyViewType<User>() {
     override fun getLayoutId(): Int {
-        return R.layout.adapter_user_girl
+        return R.layout.adapter_user
     }
 
     override fun convert(position: Int, bean: User, holder: EasyViewHolder, isChoose: Boolean) {
@@ -21,6 +21,11 @@ class UserViewTypeGirl : EasyViewType<User>() {
 
     override fun onClickItem(bean: User) {
         super.onClickItem(bean)
-        Toast.makeText(context,"用户：${bean.toString()}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context,"用户：${bean.toString()}",Toast.LENGTH_SHORT).show()
     }
+
+    override fun isOpenSingleChooseByItem(): Boolean {
+        return true
+    }
+
 }

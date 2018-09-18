@@ -20,7 +20,7 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
                         val ids = viewHolder.childClickViewIds
                         val position = rv.getChildViewHolder(view).adapterPosition
                         val adapter = rv.adapter as EasyAdapter
-                        ids.forEach {
+                        ids.forEachIndexed { _, it ->
                             val child = viewHolder.getView<View>(it)
                             if (child!=null&&child.isEnabled&&judgeIsTouchInView(child,e)){
                                 dealClick(position,adapter,false,child)
@@ -93,8 +93,14 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
         }else{
             if (isClickItem){
                 viewTypeInterface.onClickItem(adapter.getData()[position-adapter.getHeaderCount()])
+                if (viewTypeInterface.isOpenSingleChooseByItem()) {
+                    adapter.clickSingleChoose(adapter.getData()[position - adapter.getHeaderCount()])
+                }
             }else{
                 viewTypeInterface.onClickChild(adapter.getData()[position-adapter.getHeaderCount()],child?:return)
+                if (viewTypeInterface.isOpenSingleChooseByChild(child.id)){
+                    adapter.clickSingleChoose(adapter.getData()[position-adapter.getHeaderCount()])
+                }
             }
         }
     }
