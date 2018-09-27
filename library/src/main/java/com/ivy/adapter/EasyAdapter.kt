@@ -28,7 +28,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         LayoutInflater.from(context)
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         rv = recyclerView
         val layoutManager = recyclerView?.layoutManager
@@ -53,7 +53,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         }
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         if (rv?.layoutManager is GridLayoutManager){
             (rv?.layoutManager as GridLayoutManager).spanSizeLookup = originSpanSizeLookup
@@ -153,7 +153,12 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
                     val bean = data[position-getHeaderCount()]
                     val viewType = layouts[bean::class.java]?:throw IllegalArgumentException("please invoke addType function")
                     if (viewType is EasyMultipleViewType){
-                        return viewType.easyViewTypeMap[viewType.markBean(bean)]?:throw IllegalArgumentException("please invoke addType function")
+                        viewType.easyViewTypeMap.forEach {
+                            if(it.key.invoke(bean)){
+                                return it.value
+                            }
+                        }
+                        throw IllegalArgumentException("please invoke addType function")
                     }
                     return viewType
                 }
@@ -252,15 +257,15 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         }
     }
 
-    override fun onViewDetachedFromWindow(holder: EasyViewHolder?) {
+    override fun onViewDetachedFromWindow(holder: EasyViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        val easyViewType = layoutsReflect[holder?.itemViewType?:return]
+        val easyViewType = layoutsReflect[holder.itemViewType]
         easyViewType?.onViewDetachedFromWindow(holder)
     }
 
-    override fun onViewAttachedToWindow(holder: EasyViewHolder?) {
+    override fun onViewAttachedToWindow(holder: EasyViewHolder) {
         super.onViewAttachedToWindow(holder)
-        val easyViewType = layoutsReflect[holder?.itemViewType?:return]
+        val easyViewType = layoutsReflect[holder.itemViewType]
         easyViewType?.onViewAttachedToWindow(holder)
     }
 
@@ -415,6 +420,9 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
      * judge two object is equal,use in getPositionByObject function and single choose
      */
     fun judgeObjectIsEqual(last:Any?, now:Any?):Boolean{
-        return last === now
+        if (last == null&&now == null){
+            return true
+        }
+        return last?.equals(now)?:false
     }
 }

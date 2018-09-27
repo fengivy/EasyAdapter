@@ -41,7 +41,7 @@ abstract class EasyViewType<T> {
         return viewHolder
     }
 
-    private fun initViewHolder(holder: EasyViewHolder){
+    open fun initViewHolder(holder: EasyViewHolder){
 
     }
 

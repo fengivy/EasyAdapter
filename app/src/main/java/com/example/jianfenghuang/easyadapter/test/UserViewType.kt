@@ -8,11 +8,8 @@ import com.ivy.adapter.EasyMultipleViewType
  */
 class UserViewType : EasyMultipleViewType<User>() {
     override fun initViewType() {
-        addViewType("男",UserViewTypeBoy())
-        addViewType("女",UserViewTypeGirl())
-    }
-
-    override fun markBean(bean: User): Any? {
-        return bean.sex
+        addViewType({ bean -> bean.sex == "男" },UserViewTypeBoy())
+        addViewType({ bean -> bean.sex == "女" },UserViewTypeGirl())
+        addViewType({ _ -> true },UserViewTypeNoneSex())
     }
 }

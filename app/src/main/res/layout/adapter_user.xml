@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="50dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clickable="true"
-    android:background="@drawable/bg">
+    android:background="#00bbff">
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="#0bf"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
         android:id="@+id/tvAge"
@@ -21,5 +21,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:textColor="@android:color/holo_red_light"
+        android:visibility="visible"
         android:textSize="14sp"/>
 </android.support.constraint.ConstraintLayout>

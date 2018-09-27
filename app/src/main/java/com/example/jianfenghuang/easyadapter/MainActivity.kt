@@ -1,10 +1,11 @@
 package com.example.jianfenghuang.easyadapter
 
+import android.arch.paging.PagedList
+import android.arch.paging.PositionalDataSource
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import com.ivy.adapter.EasyAdapter
 import com.ivy.adapter.EasyItemClickListener
@@ -65,6 +66,8 @@ class MainActivity : AppCompatActivity() {
         val list = mutableListOf<Any>()
         list.add(User("小红",18,"女"))
         list.add(House("大房子", Color.RED))
+        list.add(User("小明",18,"男"))
+        list.add(User("小明",17,""))
         list.add(User("小明",17,"男"))
         list.add(House("二房子",Color.BLUE))
         list.add(User("小刘",15,"男"))
