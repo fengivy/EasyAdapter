@@ -291,7 +291,7 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
     }
 
     fun getData() :List<Any>{
-        return data
+        return data.toList()
     }
 
     fun <T> getDataByPosition(position:Int):T{

@@ -5,7 +5,7 @@ package com.ivy.adapter
  *
  */
 abstract class EasyMultipleViewType<T> : EasyViewType<T>() {
-    val easyViewTypeMap = HashMap<(bean:T)->Boolean,EasyViewType<T>>()
+    val easyViewTypeMap = LinkedHashMap<(bean:T)->Boolean,EasyViewType<T>>()
 
     init {
         this.initViewType()
@@ -24,7 +24,8 @@ abstract class EasyMultipleViewType<T> : EasyViewType<T>() {
 
     }
 
-    fun addViewType(func:(bean:T)->Boolean,viewType: EasyViewType<T>){
+    fun addViewType(func:(bean:T)->Boolean,viewType: EasyViewType<T>):EasyMultipleViewType<T>{
         easyViewTypeMap.put(func,viewType)
+        return this
     }
 }

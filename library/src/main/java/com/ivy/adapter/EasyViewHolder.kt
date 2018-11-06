@@ -17,8 +17,8 @@ import java.util.LinkedHashSet
  */
 class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
     private val views = SparseArray<View>()
-    public val childClickViewIds = LinkedHashSet<Int>()
-    public val childLongClickViewIds = LinkedHashSet<Int>()
+    val childClickViewIds = LinkedHashSet<Int>()
+    val childLongClickViewIds = LinkedHashSet<Int>()
 
 
     fun setText(viewId: Int, value: CharSequence): EasyViewHolder {
@@ -41,13 +41,13 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
 
     fun setBackgroundColor(viewId: Int, color: Int): EasyViewHolder {
         val view = this.getView<View>(viewId)
-        view?.setBackgroundColor(color)
+        view.setBackgroundColor(color)
         return this
     }
 
     fun setBackgroundRes(viewId: Int, backgroundRes: Int): EasyViewHolder {
         val view = this.getView<View>(viewId)
-        view?.setBackgroundResource(backgroundRes)
+        view.setBackgroundResource(backgroundRes)
         return this
     }
 
@@ -70,13 +70,13 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
     }
 
     fun setAlpha(viewId: Int, value: Float): EasyViewHolder {
-        this.getView<View>(viewId)?.alpha = value
+        this.getView<View>(viewId).alpha = value
         return this
     }
 
     fun setVisible(viewId: Int,visibility:Int): EasyViewHolder {
         val view = this.getView<View>(viewId)
-        view?.visibility = visibility
+        view.visibility = visibility
         return this
     }
 
@@ -114,13 +114,13 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
 
     fun setTag(viewId: Int, tag: Any): EasyViewHolder {
         val view = this.getView<View>(viewId)
-        view?.tag = tag
+        view.tag = tag
         return this
     }
 
     fun setTag(viewId: Int, key: Int, tag: Any): EasyViewHolder {
         val view = this.getView<View>(viewId)
-        view?.setTag(key, tag)
+        view.setTag(key, tag)
         return this
     }
 
@@ -133,10 +133,10 @@ class EasyViewHolder(view:View) : RecyclerView.ViewHolder(view) {
     }
 
 
-    fun <T : View> getView(viewId: Int): T? {
+    fun <T : View> getView(viewId: Int): T {
         var view: T? = this.views.get(viewId) as T?
         if (view == null) {
-            view = this.itemView.findViewById(viewId)
+            view = this.itemView.findViewById(viewId)?:throw IllegalArgumentException("请检查id是否存在")
             this.views.put(viewId, view)
         }
         return view
