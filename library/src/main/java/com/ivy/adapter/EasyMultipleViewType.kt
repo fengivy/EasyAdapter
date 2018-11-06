@@ -28,4 +28,5 @@ abstract class EasyMultipleViewType<T> : EasyViewType<T>() {
         easyViewTypeMap.put(func,viewType)
         return this
     }
+
 }
