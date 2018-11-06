@@ -1,5 +1,6 @@
 package com.example.jianfenghuang.easyadapter.test
 
+import android.app.Activity
 import android.view.View
 import android.widget.Toast
 import com.example.jianfenghuang.easyadapter.R
@@ -10,7 +11,7 @@ import com.ivy.adapter.EasyViewType
  * Created by jianfeng.huang on 2018/9/5.
  *
  */
-class HouseViewType : EasyViewType<House>() {
+class HouseViewType(val activity:Activity) : EasyViewType<House>() {
 
     override fun getLayoutId(): Int {
         return R.layout.adapter_house

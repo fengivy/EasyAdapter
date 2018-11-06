@@ -6,15 +6,14 @@ package com.ivy.adapter
  */
 abstract class EasyMultipleViewType<T> : EasyViewType<T>() {
     val easyViewTypeMap = LinkedHashMap<(bean:T)->Boolean,EasyViewType<T>>()
-
     init {
-        this.initViewType()
+        initViewType()
     }
-
     /**
      * please use addViewType() method addviewType
      */
-    abstract fun initViewType()
+    @Deprecated("this method has a error in kotlin,please invoke addViewType() in init{}")
+    open fun initViewType(){}
 
     override fun getLayoutId(): Int {
         return 0
