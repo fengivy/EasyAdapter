@@ -207,10 +207,15 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
 
     fun remove(any: Any){
         val index = data.indexOfFirst { it == any }
-        if (index >= 0){
-            data.removeAt(index)
-            notifyItemRemoved(getHeaderCount()+index)
+        removePosition(index)
+    }
+
+    fun removePosition(position: Int){
+        if (position<0||position>=data.size){
+            return
         }
+        data.removeAt(position)
+        notifyItemRemoved(getHeaderCount()+position)
     }
 
 
@@ -290,8 +295,8 @@ class EasyAdapter(private val context:Context) : RecyclerView.Adapter<EasyViewHo
         return footers.indexOfFirst { it == itemTypeInterface }
     }
 
-    fun getData() :List<Any>{
-        return data.toList()
+    fun <T> getData() :List<T>{
+        return data.toList() as List<T>
     }
 
     fun <T> getDataByPosition(position:Int):T{

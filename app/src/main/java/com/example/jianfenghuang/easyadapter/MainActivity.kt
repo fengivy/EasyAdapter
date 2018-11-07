@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
                 },1000)
             }
         })
+        val user= mutableListOf<User>()
+        adapter.resetData(user)
 
         refresh.setOnRefreshListener {
             refresh.isRefreshing = false

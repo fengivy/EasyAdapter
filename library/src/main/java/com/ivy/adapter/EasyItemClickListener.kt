@@ -92,14 +92,14 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
             }
         }else{
             if (isClickItem){
-                viewTypeInterface.onClickItem(adapter.getData()[position-adapter.getHeaderCount()])
+                viewTypeInterface.onClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()])
                 if (viewTypeInterface.isOpenSingleChooseByItem()) {
-                    adapter.clickSingleChoose(adapter.getData()[position - adapter.getHeaderCount()])
+                    adapter.clickSingleChoose(adapter.getData<Any>()[position - adapter.getHeaderCount()])
                 }
             }else{
-                viewTypeInterface.onClickChild(adapter.getData()[position-adapter.getHeaderCount()],child?:return)
+                viewTypeInterface.onClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return)
                 if (viewTypeInterface.isOpenSingleChooseByChild(child.id)){
-                    adapter.clickSingleChoose(adapter.getData()[position-adapter.getHeaderCount()])
+                    adapter.clickSingleChoose(adapter.getData<Any>()[position-adapter.getHeaderCount()])
                 }
             }
         }
@@ -121,9 +121,9 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
             }
         }else{
             if (isClickItem){
-                viewTypeInterface.onLongClickItem(adapter.getData()[position-adapter.getHeaderCount()])
+                viewTypeInterface.onLongClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()])
             }else{
-                viewTypeInterface.onLongClickChild(adapter.getData()[position-adapter.getHeaderCount()],child?:return)
+                viewTypeInterface.onLongClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return)
             }
         }
     }
