@@ -22,12 +22,12 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
                         val adapter = rv.adapter as EasyAdapter
                         ids.forEachIndexed { _, it ->
                             val child = viewHolder.getView<View>(it)
-                            if (child!=null&&child.isEnabled&&judgeIsTouchInView(child,e)){
-                                dealClick(position,adapter,false,child)
+                            if (child.isEnabled&&judgeIsTouchInView(child,e)){
+                                dealClick(viewHolder,position,adapter,false,child)
                                 return true
                             }
                         }
-                        dealClick(position,adapter,true,null)
+                        dealClick(viewHolder,position,adapter,true,null)
                     }
                     return true
                 }
@@ -43,11 +43,11 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
                         ids.forEach {
                             val child = viewHolder.getView<View>(it)
                             if (child!=null&&child.isEnabled&&judgeIsTouchInView(child,e)){
-                                dealLongClick(position,adapter,false,child)
+                                dealLongClick(viewHolder,position,adapter,false,child)
                                 return
                             }
                         }
-                        dealLongClick(position,adapter,true,null)
+                        dealLongClick(viewHolder,position,adapter,true,null)
                     }
                 }
             })
@@ -76,28 +76,42 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
         }
     }
 
-    private fun dealClick(position:Int, adapter: EasyAdapter, isClickItem:Boolean, child:View ?= null){
+    private fun dealClick(holder: EasyViewHolder,position:Int, adapter: EasyAdapter, isClickItem:Boolean, child:View ?= null){
         val viewTypeInterface = adapter.getItemTypeInterfaceByPosition(position)
         if (viewTypeInterface is EasyHeaderAndFooterViewType){
             if (isClickItem){
                 viewTypeInterface.onClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onClickItem(viewTypeInterface.bean?:return,holder)
             }else{
                 viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return,holder)
             }
         }else if (viewTypeInterface is EasyEmptyViewType){
             if (isClickItem){
                 viewTypeInterface.onClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onClickItem(viewTypeInterface.bean?:return,holder)
             }else{
                 viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return,holder)
+            }
+        }else if(viewTypeInterface is EasyLoadingMoreViewType){
+            if (isClickItem){
+                viewTypeInterface.onClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onClickItem(viewTypeInterface.bean?:return,holder)
+            }else{
+                viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onClickChild(viewTypeInterface.bean?:return,child?:return,holder)
             }
         }else{
             if (isClickItem){
                 viewTypeInterface.onClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()])
+                viewTypeInterface.onClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()],holder)
                 if (viewTypeInterface.isOpenSingleChooseByItem()) {
                     adapter.clickSingleChoose(adapter.getData<Any>()[position - adapter.getHeaderCount()])
                 }
             }else{
                 viewTypeInterface.onClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return)
+                viewTypeInterface.onClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return,holder)
                 if (viewTypeInterface.isOpenSingleChooseByChild(child.id)){
                     adapter.clickSingleChoose(adapter.getData<Any>()[position-adapter.getHeaderCount()])
                 }
@@ -105,25 +119,39 @@ class EasyItemClickListener : RecyclerView.SimpleOnItemTouchListener() {
         }
     }
 
-    private fun dealLongClick(position:Int, adapter: EasyAdapter, isClickItem:Boolean, child:View ?= null){
+    private fun dealLongClick(holder: EasyViewHolder,position:Int, adapter: EasyAdapter, isClickItem:Boolean, child:View ?= null){
         val viewTypeInterface = adapter.getItemTypeInterfaceByPosition(position)
         if (viewTypeInterface is EasyHeaderAndFooterViewType){
             if (isClickItem){
                 viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return,holder)
             }else{
                 viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return,holder)
             }
         }else if (viewTypeInterface is EasyEmptyViewType){
             if (isClickItem){
                 viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return,holder)
             }else{
                 viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return,holder)
+            }
+        }else if(viewTypeInterface is EasyLoadingMoreViewType){
+            if (isClickItem){
+                viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return)
+                viewTypeInterface.onLongClickItem(viewTypeInterface.bean?:return,holder)
+            }else{
+                viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return)
+                viewTypeInterface.onLongClickChild(viewTypeInterface.bean?:return,child?:return,holder)
             }
         }else{
             if (isClickItem){
                 viewTypeInterface.onLongClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()])
+                viewTypeInterface.onLongClickItem(adapter.getData<Any>()[position-adapter.getHeaderCount()],holder)
             }else{
                 viewTypeInterface.onLongClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return)
+                viewTypeInterface.onLongClickChild(adapter.getData<Any>()[position-adapter.getHeaderCount()],child?:return,holder)
             }
         }
     }

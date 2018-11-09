@@ -21,6 +21,11 @@ class UserViewTypeGirl : EasyViewType<User>() {
 
     override fun onClickItem(bean: User) {
         super.onClickItem(bean)
+
+    }
+
+    override fun onClickItem(bean: User, holder: EasyViewHolder) {
+        super.onClickItem(bean, holder)
         Toast.makeText(context,"用户：${bean.toString()}", Toast.LENGTH_SHORT).show()
     }
 }

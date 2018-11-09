@@ -1,6 +1,7 @@
 package com.ivy.adapter
 
 import android.content.Context
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,13 +50,20 @@ abstract class EasyViewType<T> {
         return beanClazz
     }
 
+    /**
+     * 不同参数的onClickItem方法会同时调用，选择重写一个适合方法即可
+     */
     open fun onClickItem(bean: T){}
+    open fun onClickItem(bean: T,holder:EasyViewHolder){}
 
     open fun onClickChild(bean: T,view: View){}
+    open fun onClickChild(bean: T,view: View,holder:EasyViewHolder){}
 
     open fun onLongClickItem(bean: T){}
+    open fun onLongClickItem(bean: T,holder:EasyViewHolder){}
 
     open fun onLongClickChild(bean: T,view: View){}
+    open fun onLongClickChild(bean: T,view: View,holder:EasyViewHolder){}
 
     open fun onViewDetachedFromWindow(viewHolder: EasyViewHolder){
 
@@ -71,5 +79,18 @@ abstract class EasyViewType<T> {
 
     open fun isOpenSingleChooseByChild(viewId:Int):Boolean{
         return false
+    }
+
+    fun getDataPosition(viewHolder: EasyViewHolder):Int{
+        val position = viewHolder.layoutPosition
+        if (position == RecyclerView.NO_POSITION){
+            return position
+        }else{
+            return position - adapter.getHeaderCount()
+        }
+    }
+
+    fun updateViewHolder(viewHolder: EasyViewHolder){
+        adapter.updateData(viewHolder.layoutPosition)
     }
 }

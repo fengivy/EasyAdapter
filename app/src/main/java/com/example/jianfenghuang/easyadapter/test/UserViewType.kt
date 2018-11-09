@@ -12,5 +12,6 @@ class UserViewType(val activity: Activity) : EasyMultipleViewType<User>() {
         addViewType({ it.sex == "男" },UserViewTypeBoy())
         addViewType({ bean -> bean.sex == "女" },UserViewTypeGirl())
         addViewType({ _ -> true },UserViewTypeNoneSex())
+
     }
 }
